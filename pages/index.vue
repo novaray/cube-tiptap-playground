@@ -1,9 +1,16 @@
 <template>
-  <Tutorial/>
+  <TiptapEditor id="editor" v-model="content"></TiptapEditor>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import {Component, Vue} from 'nuxt-property-decorator';
+import TiptapEditor from '@/components/editor/TiptapEditor.vue';
 
-export default Vue.extend({})
+@Component({
+  components: {TiptapEditor}
+})
+export default class index extends Vue {
+  private content: string = '';
+  private timer: any = null;
+}
 </script>

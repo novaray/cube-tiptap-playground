@@ -9,6 +9,7 @@
       "DOM"
     ],
     "esModuleInterop": true,
+    "strictNullChecks": false,
     "allowJs": true,
     "sourceMap": true,
     "strict": true,
