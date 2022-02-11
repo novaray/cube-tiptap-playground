@@ -1,0 +1,26 @@
+<template>
+  <CommonButton :id="getId" label="indent"
+                size="mini" type="default" class="icon-button" @click="handleClick"/>
+</template>
+
+<script lang="ts">
+import {Component, Prop} from 'vue-property-decorator';
+import {Editor} from '@tiptap/vue-2';
+import {Vue} from 'nuxt-property-decorator';
+import CommonButton from '~/components/button/CommonButton.vue';
+
+@Component({
+  components: {CommonButton},
+})
+export default class EditorIndent extends Vue {
+  @Prop({default: null}) private editor: Editor;
+
+  get getId() {
+    return 'indent-button';
+  }
+
+  private handleClick() {
+    this.editor.chain().focus().indent().run();
+  }
+}
+</script>

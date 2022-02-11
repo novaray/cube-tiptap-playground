@@ -12,6 +12,9 @@
     <EditorHorizontalRule :editor="editor" id="horizontalRule"></EditorHorizontalRule>
     <EditorBulletList :editor="editor" id="bulletList"></EditorBulletList>
     <EditorOrderedList :editor="editor" id="orderedList"></EditorOrderedList>
+    <EditorEmbed :editor="editor" id="embed"></EditorEmbed>
+    <EditorIndent :editor="editor" id="indent"></EditorIndent>
+    <EditorOutdent :editor="editor" id="outdent"></EditorOutdent>
   </div>
 </template>
 
@@ -31,9 +34,15 @@ import EditorTextLeftAlign from '@/components/editor/toolbar-basic-button/Editor
 import EditorTextRightAlign from '@/components/editor/toolbar-basic-button/EditorTextRightAlign.vue';
 import EditorTextCenterAlign from '@/components/editor/toolbar-basic-button/EditorTextCenterAlign.vue';
 import {Vue} from 'nuxt-property-decorator';
+import EditorEmbed from '~/components/editor/toolbar-basic-button/EditorEmbed.vue';
+import EditorIndent from '~/components/editor/toolbar-basic-button/EditorIndent.vue';
+import EditorOutdent from '~/components/editor/toolbar-basic-button/EditorOutdent.vue';
 
 @Component({
   components: {
+    EditorOutdent,
+    EditorIndent,
+    EditorEmbed,
     EditorTextCenterAlign, EditorTextRightAlign, EditorTextLeftAlign, EditorHyperLink,
     EditorOrderedList, EditorBulletList, EditorHorizontalRule,
     EditorHighlight, EditorItalic, EditorBold,

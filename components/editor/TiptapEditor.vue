@@ -5,12 +5,17 @@
         <BasicToolbar :editor="editor" id="basic-toolbar"></BasicToolbar>
         <TableToolbar :editor="editor" id="table-toolbar"></TableToolbar>
       </div>
-      <EditorContent :editor="editor" id="tiptap-content-wrap" style="height: 500px;">
+      <EditorContent :editor="editor" id="tiptap-content-wrap">
       </EditorContent>
+      <div>
+        <el-button @click="onPasteJsonButton" style="margin-top: 5px;">Paste Json</el-button>
+      </div>
     </div>
     <div>
-      <pre id="json" style="overflow: auto; max-height: 700px; width: 400px;"></pre>
+      <pre id="pre-json" style="overflow: auto; height: 700px; max-height: 700px; width: 400px; border: dashed red;"></pre>
+      <el-button @click="onCopyJsonButton" style="margin-top: 5px;">Copy Json</el-button>
     </div>
+    <PasteJsonDialog ref="jsonDialog" id="paste-json-dialog"></PasteJsonDialog>
   </div>
 </template>
 
@@ -25,116 +30,31 @@ import TableHeader from '@tiptap/extension-table-header';
 import Highlight from '@tiptap/extension-highlight';
 import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
+import {generateHTML} from '@tiptap/vue-2'
+import CustomEditorExternalVideo from '~/components/editor/custom-editor-component/CustomEditorExternalVideo';
+import CustomEditorIndent from '@/components/editor/custom-editor-component/CustomEditorIndent'
 import BasicToolbar from '@/components/editor/toolbar/BasicToolbar.vue';
 import TableToolbar from '@/components/editor/toolbar/TableToolbar.vue';
+import PasteJsonDialog from '~/components/dialog/PasteJsonDialog.vue';
 import {Vue} from 'nuxt-property-decorator';
 
 @Component({
-  components: {TableToolbar, BasicToolbar, EditorContent},
+  components: {PasteJsonDialog, TableToolbar, BasicToolbar, EditorContent},
 })
 export default class TiptapEditor extends Vue {
   private editor: Editor | null = null;
   private timer: any = null;
-  private editorJson: string = '';
 
   @Prop({default: null}) protected readonly value: string;
 
   public mounted() {
     this.editor = new Editor({
       content: this.value,
-      extensions: [
-        StarterKit.configure({
-          heading: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_heading'
-            }
-          },
-          paragraph: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_paragraph'
-            }
-          },
-          bold: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_bold'
-            }
-          },
-          italic: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_italic'
-            }
-          },
-          strike: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_strike'
-            }
-          },
-          code: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_code'
-            }
-          },
-          codeBlock: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_codeBlock'
-            }
-          },
-          horizontalRule: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_hr'
-            }
-          },
-          bulletList: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_bulletList'
-            }
-          },
-          orderedList: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_orderedList'
-            }
-          },
-          listItem: {
-            HTMLAttributes: {
-              class: 'tiptap__cube_listItem'
-            }
-          }
-        }),
-        Table.configure({
-          resizable: true,
-          HTMLAttributes: {
-            class: 'tiptap__cube_table',
-          },
-        }),
-        TableRow.configure({
-          HTMLAttributes: {
-            class: 'tiptap__cube_table_tr',
-          },
-        }),
-        TableCell.configure({
-          HTMLAttributes: {
-            class: 'tiptap__cube_table_td',
-          },
-        }),
-        TableHeader,
-        Highlight.configure({
-          HTMLAttributes: {
-            class: 'tiptap__cube_mark',
-          },
-        }),
-        Link.configure({
-          HTMLAttributes: {
-            class: 'tiptap__cube_hyperLink'
-          }
-        }),
-        TextAlign.configure({
-          types: ['heading', 'paragraph'],
-        })
-      ],
+      extensions: this.getExtensions(),
       editorProps: {
         attributes: {
-          class: ''
-        }
+          class: 'prose prose-sm h-96 overflow-auto',
+        },
       },
       onUpdate: () => {
         if (this.timer) {
@@ -142,11 +62,162 @@ export default class TiptapEditor extends Vue {
         }
 
         this.timer = setTimeout(() => {
-          console.log(this.editor?.getJSON(), this.editor?.getJSON().text);
-          // this.editorJson = this.editor?.getJSON().text;
-          document.getElementById("json").textContent = JSON.stringify(this.editor?.getJSON(), undefined, 2);
+          document.getElementById('pre-json').textContent = JSON.stringify(this.editor?.getJSON(), undefined, 2);
         }, 200);
       },
+    });
+  }
+
+  public onPasteJsonButton() {
+    const jsonDialog = this.$refs.jsonDialog as any;
+
+    jsonDialog.show()
+              .then((json: string) => {
+                let parseJson = null;
+                try {
+                  parseJson = JSON.parse(json);
+                } catch (error: any) {
+                  this.$notify({
+                    title: 'Error',
+                    message: '유효한 json string 형식이 아닙니다.',
+                    type: 'error',
+                    duration: 2000
+                  });
+                  return;
+                }
+
+                let html = null;
+                try {
+                  html = generateHTML(parseJson, this.getExtensions());
+                } catch (error: any) {
+                  this.$notify({
+                    title: 'Error',
+                    message: 'TipTap에서 요구하는 Json 형식과 일치하지 않습니다.',
+                    type: 'error',
+                    duration: 2000
+                  });
+                  return;
+                }
+
+                this.editor?.commands.setContent(html);
+              })
+              .catch((reject: any) => {
+
+              });
+  }
+
+  public getExtensions() {
+    return [
+      CustomEditorExternalVideo,
+      CustomEditorIndent,
+      StarterKit.configure({
+        heading: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_heading'
+          }
+        },
+        paragraph: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_paragraph'
+          }
+        },
+        bold: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_bold'
+          }
+        },
+        italic: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_italic'
+          }
+        },
+        strike: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_strike'
+          }
+        },
+        code: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_code'
+          }
+        },
+        codeBlock: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_codeBlock'
+          }
+        },
+        horizontalRule: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_hr'
+          }
+        },
+        bulletList: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_bulletList'
+          }
+        },
+        orderedList: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_orderedList'
+          }
+        },
+        listItem: {
+          HTMLAttributes: {
+            class: 'tiptap__cube_listItem'
+          }
+        },
+      }),
+      Table.configure({
+        HTMLAttributes: {
+          class: 'table-auto',
+        },
+      }),
+      TableRow.configure({
+        HTMLAttributes: {
+          class: 'border border-slate-600',
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: 'border border-slate-600',
+        },
+      }),
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: 'border border-slate-600 bg-slate-400',
+        },
+      }),
+      Highlight.configure({
+        HTMLAttributes: {
+          class: 'tiptap__cube_mark',
+        },
+      }),
+      Link.configure({
+        HTMLAttributes: {
+          class: 'tiptap__cube_hyperLink'
+        }
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      })
+    ];
+  }
+
+  public onCopyJsonButton() {
+    const textContent = document.getElementById('pre-json').textContent;
+
+    const t = document.createElement('textarea');
+    document.body.appendChild(t);
+    t.value = textContent;
+    t.select();
+    document.execCommand('copy');
+    document.body.removeChild(t);
+
+    this.$notify({
+      title: 'Success',
+      message: 'Text Copied!',
+      type: 'success',
+      duration: 2000
     });
   }
 

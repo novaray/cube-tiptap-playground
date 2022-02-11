@@ -1,16 +1,16 @@
 <template>
-  <IconButton icon="r3-icon-unlock" :id="getId"
-              size="mini" type="default" class="icon-button" :class="getActiveClass" @click="handleClick"/>
+  <CommonButton :id="getId" label="OrderedList"
+                size="mini" type="default" class="icon-button" :class="getActiveClass" @click="handleClick"/>
 </template>
 
 <script lang="ts">
 import {Component, Prop} from 'vue-property-decorator';
 import {Editor} from '@tiptap/vue-2';
-import IconButton from '@/components/button/IconButton.vue';
 import {Vue} from 'nuxt-property-decorator';
+import CommonButton from '~/components/button/CommonButton.vue';
 
 @Component({
-  components: {IconButton},
+  components: {CommonButton},
 })
 export default class EditorOrderedList extends Vue {
   @Prop({default: null}) private editor: Editor;

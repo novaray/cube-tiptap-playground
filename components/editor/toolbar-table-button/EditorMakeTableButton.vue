@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-input-number v-model="data.rows" :min="1" :max="10"></el-input-number>
-    <el-input-number v-model="data.rows" :min="1" :max="10"></el-input-number>
-    <el-checkbox v-model="data.isWithHeaderRow"></el-checkbox>
+    <el-input-number v-model="data.columns" :min="1" :max="10"></el-input-number>
+    <el-checkbox v-model="data.isWithHeaderRow" label="WithHeaderRow"></el-checkbox>
     <CommonButton :id="getId" label="MakeTable"
                   size="mini" type="default" class="icon-button" @click="handleClick"
                   :disabled="isDisabled"/>

@@ -1,5 +1,6 @@
 <template>
-  <el-button ref="elementRef" @click="onClick($event)" :size="buttonSize" :type="buttonType" v-text="buttonLabel"/>
+  <el-button ref="elementRef" @click="onClick($event)" :size="buttonSize" :type="buttonType" v-text="buttonLabel"
+  :disabled="isDisabled"/>
 </template>
 
 <script lang="ts">
