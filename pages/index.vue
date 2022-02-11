@@ -11,6 +11,5 @@ import TiptapEditor from '@/components/editor/TiptapEditor.vue';
 })
 export default class index extends Vue {
   private content: string = '';
-  private timer: any = null;
 }
 </script>
