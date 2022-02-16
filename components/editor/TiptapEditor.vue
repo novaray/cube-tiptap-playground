@@ -33,6 +33,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import {generateHTML} from '@tiptap/vue-2'
 import CustomEditorExternalVideo from '~/components/editor/custom-editor-component/CustomEditorExternalVideo';
 import CustomEditorIndent from '@/components/editor/custom-editor-component/CustomEditorIndent'
+import CustomEditorImage from '@/components/editor/custom-editor-component/CustomEditorImage';
 import BasicToolbar from '@/components/editor/toolbar/BasicToolbar.vue';
 import TableToolbar from '@/components/editor/toolbar/TableToolbar.vue';
 import PasteJsonDialog from '~/components/dialog/PasteJsonDialog.vue';
@@ -104,6 +105,32 @@ export default class TiptapEditor extends Vue {
               .catch((reject: any) => {
 
               });
+  }
+
+  public upload(file: File) {
+    const uuid = this.generateUUID();
+
+    const obj = {
+      src: `http://placeimg.com/640/480/fashion?random=${uuid}`,
+      id: uuid
+    }
+    return Promise.resolve(obj);
+  }
+
+  private generateUUID() { // Public Domain/MIT
+    let d = new Date().getTime();//Timestamp
+    let d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      let r = Math.random() * 16;//random number between 0 and 16
+      if(d > 0){//Use timestamp until depleted
+        r = (d + r)%16 | 0;
+        d = Math.floor(d/16);
+      } else {//Use microseconds since page-load if supported
+        r = (d2 + r)%16 | 0;
+        d2 = Math.floor(d2/16);
+      }
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
   }
 
   public getExtensions() {
@@ -199,7 +226,8 @@ export default class TiptapEditor extends Vue {
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
-      })
+      }),
+      CustomEditorImage(this.upload)
     ];
   }
 

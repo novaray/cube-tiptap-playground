@@ -15,6 +15,7 @@
     <EditorEmbed :editor="editor" id="embed"></EditorEmbed>
     <EditorIndent :editor="editor" id="indent"></EditorIndent>
     <EditorOutdent :editor="editor" id="outdent"></EditorOutdent>
+    <EditorImage :editor="editor" id="image"></EditorImage>
   </div>
 </template>
 
@@ -37,9 +38,11 @@ import {Vue} from 'nuxt-property-decorator';
 import EditorEmbed from '~/components/editor/toolbar-basic-button/EditorEmbed.vue';
 import EditorIndent from '~/components/editor/toolbar-basic-button/EditorIndent.vue';
 import EditorOutdent from '~/components/editor/toolbar-basic-button/EditorOutdent.vue';
+import EditorImage from '~/components/editor/toolbar-basic-button/EditorImage.vue';
 
 @Component({
   components: {
+    EditorImage,
     EditorOutdent,
     EditorIndent,
     EditorEmbed,
