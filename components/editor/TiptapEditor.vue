@@ -5,7 +5,7 @@
         <BasicToolbar :editor="editor" id="basic-toolbar"></BasicToolbar>
         <TableToolbar :editor="editor" id="table-toolbar"></TableToolbar>
       </div>
-      <EditorContent :editor="editor" id="tiptap-content-wrap">
+      <EditorContent :editor="editor" id="tiptap-content-wrap" style="height: 500px; max-height: 500px; overflow: auto;">
       </EditorContent>
       <div>
         <el-button @click="onPasteJsonButton" style="margin-top: 5px;">Paste Json</el-button>
@@ -52,11 +52,6 @@ export default class TiptapEditor extends Vue {
     this.editor = new Editor({
       content: this.value,
       extensions: this.getExtensions(),
-      editorProps: {
-        attributes: {
-          class: 'prose prose-sm h-96 overflow-auto',
-        },
-      },
       onUpdate: () => {
         if (this.timer) {
           clearTimeout(this.timer);
@@ -110,11 +105,33 @@ export default class TiptapEditor extends Vue {
   public upload(file: File) {
     const uuid = this.generateUUID();
 
-    const obj = {
-      src: `http://placeimg.com/640/480/fashion?random=${uuid}`,
-      id: uuid
+    const width = window.prompt('width');
+    const numberWidth = parseInt(width, 10);
+
+    const image = document.createElement('img');
+    image.src = `http://placeimg.com/640/480/fashion?random=${uuid}`;
+    image.id = uuid;
+    image.width = numberWidth;
+    image.setAttribute('style', 'opacity: 0');
+    document.querySelector('body').appendChild(image);
+    this.$nuxt.$loading.start();
+    image.onload = () => {
+      const height = image.clientHeight;
+      if (width && !isNaN(numberWidth)) {
+        const obj = {
+          src: `http://placeimg.com/640/480/fashion?random=${uuid}`,
+          id: uuid,
+          width: numberWidth,
+          heightPixel: height
+        };
+
+        return Promise.resolve(obj);
+      }
+      image.remove();
+      this.$nuxt.$loading.finish();
     }
-    return Promise.resolve(obj);
+
+    return Promise.reject();
   }
 
   private generateUUID() { // Public Domain/MIT
@@ -195,25 +212,22 @@ export default class TiptapEditor extends Vue {
         },
       }),
       Table.configure({
+        resizable: true,
         HTMLAttributes: {
-          class: 'table-auto',
+          class: 'tiptap__cube_table',
         },
       }),
       TableRow.configure({
         HTMLAttributes: {
-          class: 'border border-slate-600',
+          class: 'tiptap__cube_table_tr',
         },
       }),
       TableCell.configure({
         HTMLAttributes: {
-          class: 'border border-slate-600',
+          class: 'tiptap__cube_table_td',
         },
       }),
-      TableHeader.configure({
-        HTMLAttributes: {
-          class: 'border border-slate-600 bg-slate-400',
-        },
-      }),
+      TableHeader,
       Highlight.configure({
         HTMLAttributes: {
           class: 'tiptap__cube_mark',

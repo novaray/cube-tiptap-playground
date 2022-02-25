@@ -16,6 +16,11 @@ export default {
     ]
   },
 
+  loading: {
+    color: 'blue',
+    height: '6px'
+  },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     'element-ui/lib/theme-chalk/index.css',
@@ -34,7 +39,6 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
-    '@nuxtjs/tailwindcss'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules

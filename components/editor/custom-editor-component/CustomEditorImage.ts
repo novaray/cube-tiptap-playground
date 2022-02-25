@@ -14,7 +14,7 @@ const IMAGE_INPUT_REGEX = /!\[(.+|:?)\]\((\S+)(?:(?:\s+)["'](\S+)["'])?\)/;
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     customImage: {
-      setImage: (options: { src: string, id: string }) => ReturnType,
+      setImage: (options: { src: string, id: string, width: number, widthPixel: number, heightPixel: number }) => ReturnType,
     }
   }
 }
@@ -26,7 +26,10 @@ export default (uploadFn: UploadFn) => {
     draggable: true,
     addAttributes: () => ({
       src: {},
-      id: {}
+      id: {},
+      width: {},
+      widthPixel: {},
+      heightPixel: {}
     }),
     parseHTML: () => [
       {
@@ -37,7 +40,10 @@ export default (uploadFn: UploadFn) => {
 
           return {
             src: element.getAttribute('src'),
-            id: element.getAttribute('id')
+            id: element.getAttribute('id'),
+            width: element.getAttribute('widthPixel') ?? element.getAttribute('width'),
+            widthPixel: element.getAttribute('widthPixel') ?? element.getAttribute('width'),
+            heightPixel: element.getAttribute('heightPixel')
           };
         },
       },
@@ -48,19 +54,12 @@ export default (uploadFn: UploadFn) => {
       return {
         setImage: (attrs: any) => ({tr, dispatch}) => {
           const { selection } = tr;
-          // console.log(attrs, selection, state, dispatch);
-          // const position = selection.$cursor
-          //   ? selection.$cursor.pos
-          //   : selection.$to.pos;
           const node = this.type.create(attrs);
-          console.log(attrs, node);
-          // const transaction = state.tr.insert(position, node);
           if (dispatch) {
             tr.replaceRangeWith(selection.from, selection.to, node);
           }
 
           return true;
-          // dispatch(transaction);
         }
       }
     },
@@ -88,6 +87,8 @@ export default (uploadFn: UploadFn) => {
 type UploadFn = (image: File) => Promise<{
   src: string;
   id: string;
+  width: number;
+  heightPixel: number;
 }>;
 
 const dropImagePlugin = (upload: UploadFn) => {
@@ -107,7 +108,10 @@ const dropImagePlugin = (upload: UploadFn) => {
               upload(image).then((info) => {
                 const node = schema.nodes.image.create({
                   src: info.src,
-                  id: info.id
+                  id: info.id,
+                  width: info.width,
+                  widthPixel: info.width,
+                  heightPixel: info.heightPixel,
                 });
                 const transaction = view.state.tr.replaceSelectionWith(node);
                 view.dispatch(transaction);

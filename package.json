@@ -26,8 +26,6 @@
   },
   "devDependencies": {
     "@nuxt/types": "^2.15.7",
-    "@nuxt/typescript-build": "^2.1.0",
-    "@nuxtjs/tailwindcss": "^5.0.0-4",
-    "@tailwindcss/typography": "^0.5.1"
+    "@nuxt/typescript-build": "^2.1.0"
   }
 }

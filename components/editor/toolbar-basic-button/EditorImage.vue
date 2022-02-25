@@ -29,10 +29,30 @@ export default class EditorImage extends Vue {
     this.fileName = raw.name;
     const uuid = this.generateUUID();
 
-    this.editor.chain().setImage({
-      src: `http://placeimg.com/640/480/fashion?random=${uuid}`,
-      id: uuid
-    }).run();
+    const width = window.prompt('width');
+    const numberWidth = parseInt(width, 10);
+
+    const image = document.createElement('img');
+    image.src = `http://placeimg.com/640/480/fashion?random=${uuid}`;
+    image.id = uuid;
+    image.width = numberWidth;
+    image.setAttribute('style', 'opacity: 0');
+    document.querySelector('body').appendChild(image);
+    this.$nuxt.$loading.start();
+    image.onload = () => {
+      const height = image.clientHeight;
+      if (width && !isNaN(numberWidth)) {
+        this.editor.chain().setImage({
+          src: `http://placeimg.com/640/480/fashion?random=${uuid}`,
+          id: uuid,
+          width: numberWidth,
+          widthPixel: numberWidth,
+          heightPixel: height
+        }).run();
+      }
+      image.remove();
+      this.$nuxt.$loading.finish();
+    }
   }
 
   private generateUUID() { // Public Domain/MIT
