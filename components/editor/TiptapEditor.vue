@@ -96,6 +96,7 @@ export default class TiptapEditor extends Vue {
                 }
 
                 this.editor?.commands.setContent(html);
+                document.getElementById('pre-json').textContent = JSON.stringify(parseJson, undefined, 2);
               })
               .catch((reject: any) => {
 
