@@ -30,6 +30,7 @@ import TableHeader from '@tiptap/extension-table-header';
 import Highlight from '@tiptap/extension-highlight';
 import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
+import Underline from '@tiptap/extension-underline';
 import {generateHTML} from '@tiptap/vue-2'
 import CustomEditorExternalVideo from '~/components/editor/custom-editor-component/CustomEditorExternalVideo';
 import CustomEditorIndent from '@/components/editor/custom-editor-component/CustomEditorIndent'
@@ -241,6 +242,11 @@ export default class TiptapEditor extends Vue {
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
+      }),
+      Underline.configure({
+        HTMLAttributes: {
+          class: 'tiptap__cube_underline'
+        }
       }),
       CustomEditorImage(this.upload)
     ];

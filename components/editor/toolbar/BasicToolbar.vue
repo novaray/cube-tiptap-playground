@@ -4,6 +4,7 @@
     <EditorParagraph :editor="editor" id="paragraph"></EditorParagraph>
     <EditorBold :editor="editor" id="bold"></EditorBold>
     <EditorItalic :editor="editor" id="italic"></EditorItalic>
+    <EditorUnderline :editor="editor" id="underline"></EditorUnderline>
     <EditorHighlight :editor="editor" id="highlight"></EditorHighlight>
     <EditorHyperLink :editor="editor" id="hyperLink"></EditorHyperLink>
     <EditorTextLeftAlign :editor="editor" id="textAlignLeft"></EditorTextLeftAlign>
@@ -39,9 +40,11 @@ import EditorEmbed from '~/components/editor/toolbar-basic-button/EditorEmbed.vu
 import EditorIndent from '~/components/editor/toolbar-basic-button/EditorIndent.vue';
 import EditorOutdent from '~/components/editor/toolbar-basic-button/EditorOutdent.vue';
 import EditorImage from '~/components/editor/toolbar-basic-button/EditorImage.vue';
+import EditorUnderline from '~/components/editor/toolbar-basic-button/EditorUnderline.vue';
 
 @Component({
   components: {
+    EditorUnderline,
     EditorImage,
     EditorOutdent,
     EditorIndent,
